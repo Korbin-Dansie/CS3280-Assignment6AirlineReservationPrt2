@@ -31,7 +31,7 @@ namespace Assignment6AirlineReservation
             }
             catch (Exception ex)
             {
-                throw new Exception(MethodInfo.GetCurrentMethod().DeclaringType.Name + "." + MethodInfo.GetCurrentMethod().Name + " -> " + ex.Message);
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
 
@@ -57,32 +57,43 @@ namespace Assignment6AirlineReservation
             }
             catch (System.Exception ex)
             {
-                HandleError(MethodInfo.GetCurrentMethod().DeclaringType.Name,
-                            MethodInfo.GetCurrentMethod().Name, ex.Message);
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
 
         /// <summary>
-        /// exception handler that shows the error
+        /// Handels when the user clicks save
         /// </summary>
-        /// <param name="sClass">the class</param>
-        /// <param name="sMethod">the method</param>
-        /// <param name="sMessage">the error message</param>
-        private void HandleError(string sClass, string sMethod, string sMessage)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cmdSave_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                MessageBox.Show(sClass + "." + sMethod + " -> " + sMessage);
+                this.Close();
             }
-            catch (System.Exception ex)
+            catch(Exception ex)
             {
-                System.IO.File.AppendAllText("C:\\Error.txt", Environment.NewLine + "HandleError Exception: " + ex.Message);
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
 
-        private void cmdSave_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Change what happens when the window closes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.Close();
+            try
+            {
+                this.Hide();
+                e.Cancel = true;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
     }
 }

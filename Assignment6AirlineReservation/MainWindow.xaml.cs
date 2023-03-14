@@ -22,9 +22,24 @@ namespace Assignment6AirlineReservation
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Data Connection
+        /// </summary>
         clsDataAccess clsData;
+
+        /// <summary>
+        /// A list of flights
+        /// </summary>
+        FlightManager flightManager;
+
+        /// <summary>
+        /// The add passenger window
+        /// </summary>
         wndAddPassenger wndAddPass;
 
+        /// <summary>
+        /// constructor for the main window
+        /// </summary>
         public MainWindow()
         {
             try
@@ -32,99 +47,136 @@ namespace Assignment6AirlineReservation
                 InitializeComponent();
                 Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
-                DataSet ds = new DataSet();
-                //Should probably not have SQL statements behind the UI
-                string sSQL = "SELECT Flight_ID, Flight_Number, Aircraft_Type FROM FLIGHT";
-                int iRet = 0;
+                //Create new windows
+                wndAddPass = new wndAddPassenger();
+
+
                 clsData = new clsDataAccess();
 
-                //This should probably be in a new class.  Would be nice if this new class
-                //returned a list of Flight objects that was then bound to the combo box
-                //Also should show the flight number and aircraft type together
-                ds = clsData.ExecuteSQLStatement(sSQL, ref iRet);
+                // Get the flights from the data base
+                flightManager = new FlightManager(clsData);
 
-                //Should probably bind a list of flights to the combo box
-                for(int i = 0; i < iRet; i++)
-                {
-                    cbChooseFlight.Items.Add(ds.Tables[0].Rows[i][0]);
-                }
+                // Load the flights into the combobox
+                cbChooseFlight.Items.Clear();
+                cbChooseFlight.ItemsSource = flightManager.getFlights();
             }
             catch (Exception ex)
             {
-                HandleError(MethodInfo.GetCurrentMethod().DeclaringType.Name,
-                    MethodInfo.GetCurrentMethod().Name, ex.Message);
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
 
+        /// <summary>
+        /// Triggers when the flight combo box is changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cbChooseFlight_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-                string selection = cbChooseFlight.SelectedItem.ToString();  //This is wrong, if a list of flights was in the combo box, then could get the selected flight in an object
+                Flight flight = cbChooseFlight.SelectedItem as Flight;
+
+                // If flight is null exit
+                if (flight == null)
+                {
+                    return;
+                }
+
+                // Enable input
                 cbChoosePassenger.IsEnabled = true;
                 gPassengerCommands.IsEnabled = true;
-                DataSet ds = new DataSet();                
-                int iRet = 0;
 
-                //Should be using a flight object to get the flight ID here
-                if (selection == "1")
+                // Display the correct canvas
+                if (flight.AircraftType == "Boeing 767")
                 {
-                    CanvasA380.Visibility = Visibility.Hidden;
-                    Canvas767.Visibility = Visibility.Visible;
+                    toggleFlightCanvases(true);
                 }
                 else
                 {
-                    Canvas767.Visibility = Visibility.Hidden;
-                    CanvasA380.Visibility = Visibility.Visible;
+                    toggleFlightCanvases(false);
                 }
 
-                //I think this should be in a new class to hold SQL statments
-                string sSQL = "SELECT Passenger.Passenger_ID, First_Name, Last_Name, FPL.Seat_Number " +
-                              "FROM Passenger, Flight_Passenger_Link FPL " +
-                              "WHERE Passenger.Passenger_ID = FPL.Passenger_ID AND " +
-                              "Flight_ID = " + cbChooseFlight.SelectedItem.ToString();//If the cbChooseFlight was bound to a list of Flights, the selected object would have the flight ID
-                //Probably put in a new class
-                ds = clsData.ExecuteSQLStatement(sSQL, ref iRet);
+                // Fill in the passanger combo box
+                PassengerManager passengers = new PassengerManager(clsData);
+                passengers.GetPassengers(flight.FlightId);
 
-                cbChoosePassenger.Items.Clear();//Don't need if assigning a list of passengers to the combo box
+                // Add the passangers to the combo box
+                cbChoosePassenger.ItemsSource = passengers.Passengers;
 
-                //Would be nice if code from another class executed the SQL above, added each passenger into a Passenger object,
-                //then into a list of Passengers to be returned and bound to the combo box
-                for (int i = 0; i < iRet; i++)
-                {
-                    cbChoosePassenger.Items.Add(ds.Tables[0].Rows[i][1] + " " + ds.Tables[0].Rows[i][2]);
-                }
             }
             catch (Exception ex)
             {
-                HandleError(MethodInfo.GetCurrentMethod().DeclaringType.Name,
-                    MethodInfo.GetCurrentMethod().Name, ex.Message);
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
 
+        /// <summary>
+        /// Handels when the user clicks on the add passenger button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cmdAddPassenger_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                wndAddPass = new wndAddPassenger();
+                this.Hide();
+
+                //wndAddPass.Show();
+                //wndAddPass.Hide();
+
+                relocateWindow(wndAddPass, this);
                 wndAddPass.ShowDialog();
+                relocateWindow(this, wndAddPass);
+                this.Show();
             }
             catch (Exception ex)
             {
-                HandleError(MethodInfo.GetCurrentMethod().DeclaringType.Name,
-                    MethodInfo.GetCurrentMethod().Name, ex.Message);
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
 
-        private void HandleError(string sClass, string sMethod, string sMessage)
+
+        /// <summary>
+        /// Toggle the visibility of the two canvases
+        /// </summary>
+        /// <param name="is767Visible"></param>
+        private void toggleFlightCanvases(bool is767Visible)
         {
             try
             {
-                MessageBox.Show(sClass + "." + sMethod + " -> " + sMessage);
+                if (is767Visible)
+                {
+                    CanvasA380.Visibility = Visibility.Collapsed;
+                    Canvas767.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    CanvasA380.Visibility = Visibility.Visible;
+                    Canvas767.Visibility = Visibility.Collapsed;
+                }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                System.IO.File.AppendAllText(@"C:\Error.txt", Environment.NewLine + "HandleError Exception: " + ex.Message);
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
+
+        /// <summary>
+        /// Relocate the windows to match
+        /// </summary>
+        /// <param name="toWindow"></param>
+        /// <param name="fromWindow"></param>
+        private void relocateWindow(Window toWindow, Window fromWindow)
+        {
+            try
+            {
+                toWindow.Left = fromWindow.Left;
+                toWindow.Top = fromWindow.Top;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
     }

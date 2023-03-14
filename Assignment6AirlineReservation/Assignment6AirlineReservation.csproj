@@ -56,6 +56,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="clsSQL.cs" />
+    <Compile Include="ErrorHandling.cs" />
+    <Compile Include="Flight.cs" />
+    <Compile Include="FlightManager.cs" />
+    <Compile Include="Passenger.cs" />
+    <Compile Include="PassengerManager.cs" />
     <Compile Include="wndAddPassenger.xaml.cs">
       <DependentUpon>wndAddPassenger.xaml</DependentUpon>
     </Compile>
