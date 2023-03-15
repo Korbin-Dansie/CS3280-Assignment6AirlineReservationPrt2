@@ -79,7 +79,7 @@ namespace Assignment6AirlineReservation
         /// <param name="sFlightID"></param>
         /// <param name="sPassengerID"></param>
         /// <returns></returns>
-        public static string UpdatePassengerSeat(string sNewSeatNumber, string sFlightID, string sPassengerID)
+        public static string UpdatePassengerSeat(string sFlightID, string sPassengerID, string sNewSeatNumber)
         {
             try
             {
@@ -139,5 +139,66 @@ namespace Assignment6AirlineReservation
             }
         }
 
+        /// <summary>
+        /// SQL statment to get the max passenger ID value
+        /// </summary>
+        /// <returns></returns>
+        public static string GetMaxPassengerID()
+        {
+            try
+            {
+                string sSQL = "SELECT Max(Passenger_ID) FROM Passenger";
+                return sSQL;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// SQL statment to insert a new Passenger row
+        /// </summary>
+        /// <param name="sPassengerID"></param>
+        /// <param name="FirstName"></param>
+        /// <param name="LastName"></param>
+        /// <returns></returns>
+        public static string InsertPassenger(string sPassengerID, string FirstName, string LastName)
+        {
+            try
+            {
+                string sSQL = "INSERT INTO Passenger (Passenger_ID, First_Name, Last_Name)" +
+                              $"VALUES (\'{sPassengerID}\', \'{FirstName}\', \'{LastName}\')";
+                return sSQL;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// SQL statment to insert a new Flight_Passenger_Link row
+        /// </summary>
+        /// <param name="sFlightID"></param>
+        /// <param name="sPassengerID"></param>
+        /// <param name="sNewSeatNumber"></param>
+        /// <returns></returns>
+        public static string InsertFlightPassengerLink(string sFlightID, string sPassengerID, string sNewSeatNumber)
+        {
+            try
+            {
+                string sSQL = "INSERT INTO Flight_Passenger_Link (Flight_ID, Passenger_ID, Seat_Number)" +
+                              $"VALUES (\'{sFlightID}\', \'{sPassengerID}\', \'{sNewSeatNumber}\')";
+                return sSQL;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
+            }
+        }
     }
 }

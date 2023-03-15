@@ -105,5 +105,43 @@ namespace Assignment6AirlineReservation
                 ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
+
+        /// <summary>
+        /// Add a new passenger
+        /// Does not automaticly update the list of passengers
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <returns>New PassengerID</returns>
+        public int AddPassenger(string firstName, string lastName)
+        {
+            try
+            {
+                //Dataset
+                DataSet ds = new DataSet();
+
+                // sql to get max number
+                string sql = clsSQL.GetMaxPassengerID();
+
+                // Execute sql
+                int rows = 0;
+                string maxNumber = db.ExecuteScalarSQL(sql);
+                int newNumber = 0;
+
+                Int32.TryParse(maxNumber, out newNumber);
+                newNumber++;
+
+                // sql to insert new passenger
+                sql = clsSQL.InsertPassenger(newNumber.ToString(), firstName, lastName);
+                db.ExecuteNonQuery(sql);
+
+                return newNumber;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return -1;
+            }
+        }
     }
 }

@@ -89,6 +89,23 @@ namespace Assignment6AirlineReservation
             }
         }
 
+        public void insertSeat(int FlightID, int PassengerID, string SeatNumber)
+        {
+            try
+            {
+                // Sql
+                string sql = clsSQL.InsertFlightPassengerLink(FlightID.ToString(), PassengerID.ToString(), SeatNumber);
+
+                // Execute
+                db.ExecuteNonQuery(sql);
+            
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
+
         /// <summary>
         /// Move a passenger to another seat
         /// Does not update it's list automaticly with the new information
@@ -103,7 +120,7 @@ namespace Assignment6AirlineReservation
                 // Dataset
                 DataSet ds = new DataSet();
 
-                string sql = clsSQL.UpdatePassengerSeat(NewSeatNumber, FlightID.ToString(), PassengerID.ToString());
+                string sql = clsSQL.UpdatePassengerSeat(FlightID.ToString(), PassengerID.ToString(), NewSeatNumber);
 
                 // Execute sql
                 int rows = 0;
