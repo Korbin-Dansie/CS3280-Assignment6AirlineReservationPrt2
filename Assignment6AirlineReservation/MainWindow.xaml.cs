@@ -422,12 +422,40 @@ namespace Assignment6AirlineReservation
             }
         }
 
+        /// <summary>
+        /// Delete currently selected passenger
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cmdDeletePassenger_Click(object sender, RoutedEventArgs e)
         {
-            // Passenger is selected
-            // Delete the currently selected passenger (Done in another class)
-            // Relaod the passenger into the combo box
-            // Reload the taken seats
+            try
+            {
+                // Passenger is selected
+                Passenger passenger = (Passenger)cbChoosePassenger.SelectedItem;
+
+                if (passenger == null)
+                {
+                    return;
+                }
+                if (seatManager == null)
+                {
+                    return;
+                }
+
+                // Delete the currently selected passenger (Done in another class)
+                seatManager.DeleteSeat(passenger.PassengerId);
+                passengers.DeletePassenger(passenger.PassengerId);
+
+                // Relaod the passenger into the combo box
+                // Reload the taken seats
+                reloadPassengers();
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
+            }
+
         }
 
         /// <summary>

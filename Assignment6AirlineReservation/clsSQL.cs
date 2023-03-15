@@ -106,7 +106,7 @@ namespace Assignment6AirlineReservation
         {
             try
             {
-                string sSQL = "DELETE Passenger " +
+                string sSQL = "DELETE FROM Passenger " +
                               " WHERE Passenger_ID = " + sPassengerID;
                 return sSQL;
             }
@@ -128,7 +128,7 @@ namespace Assignment6AirlineReservation
         {
             try
             {
-                string sSQL = "DELETE Flight_Passenger_Link " +
+                string sSQL = "DELETE FROM Flight_Passenger_Link " +
                               " WHERE Passenger_ID = " + sPassengerID;
                 return sSQL;
             }

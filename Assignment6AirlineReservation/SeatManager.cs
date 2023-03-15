@@ -113,7 +113,7 @@ namespace Assignment6AirlineReservation
         /// As far as I can tell this is how its supposed to be programed
         /// </summary>
         /// <param name="PassengerID"></param>
-        public void deleteSeat(int PassengerID)
+        public void DeleteSeat(int PassengerID)
         {
             try
             {
