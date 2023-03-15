@@ -27,7 +27,7 @@ namespace Assignment6AirlineReservation
         /// <summary>
         /// The flight Id
         /// </summary>
-        public int Flight { 
+        public int Flight_Id { 
             get { return _flight_Id; } 
             set { _flight_Id = value; } 
         }
@@ -35,7 +35,7 @@ namespace Assignment6AirlineReservation
         /// <summary>
         /// The passenger Id
         /// </summary>
-        public int Passenger {
+        public int Passenger_Id {
             get { return _passenger_Id; }
             set { _passenger_Id = value; }
         }
@@ -56,8 +56,8 @@ namespace Assignment6AirlineReservation
         /// <param name="seatNumber"></param>
         public FlightPassengerLink(int flight_Id, int passenger_id, int seatNumber)
         {
-            Flight = flight_Id;
-            Passenger = passenger_id;
+            Flight_Id = flight_Id;
+            Passenger_Id = passenger_id;
             SeatNumber = seatNumber;
         }
     }
