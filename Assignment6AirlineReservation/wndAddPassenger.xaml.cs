@@ -21,6 +21,16 @@ namespace Assignment6AirlineReservation
     public partial class wndAddPassenger : Window
     {
         /// <summary>
+        /// The new passenger
+        /// </summary>
+        Passenger passenger = new Passenger();
+
+        /// <summary>
+        /// See if save was clicked
+        /// </summary>
+        public bool isSaveClicked = false;
+
+        /// <summary>
         /// constructor for the add passenger window
         /// </summary>
         public wndAddPassenger()
@@ -70,6 +80,39 @@ namespace Assignment6AirlineReservation
         {
             try
             {
+                bool informationCorrect = true;
+                string errorMessage = String.Empty;
+
+                //See if both first and last name are filled
+                if (String.IsNullOrEmpty(txtFirstName.Text))
+                {
+                    informationCorrect = false;
+                    errorMessage = "Please enter a first name";
+                }
+                else if (String.IsNullOrEmpty(txtLastName.Text))
+                {
+                    informationCorrect = false;
+                    errorMessage = "Please enter a last name";
+                }
+                else
+                {
+                    informationCorrect = true;
+                    errorMessage = String.Empty;
+                }
+
+                // See if there was an error with the information is correct
+                if (!informationCorrect)
+                {
+                    lbError.Visibility = Visibility.Visible;
+                    tbError.Text = errorMessage;
+                    return;
+                }
+                else
+                {
+                    lbError.Visibility = Visibility.Collapsed;
+                }
+
+                isSaveClicked = true;
                 this.Close();
             }
             catch(Exception ex)

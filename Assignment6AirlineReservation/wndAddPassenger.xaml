@@ -12,10 +12,11 @@
             <ColumnDefinition Width="95*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="41*"/>
-            <RowDefinition Height="48*"/>
-            <RowDefinition Height="50*"/>
-            <RowDefinition Height="50*"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Label x:Name="lblTitle" Content="Please Enter The Passenger's Name" HorizontalAlignment="Center" Margin="48,0" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Height="26" Width="196"/>
         <Label x:Name="label" Content="First Name" HorizontalAlignment="Right" Margin="0,11,5,11" Grid.Row="1" VerticalAlignment="Center" Height="26" Width="67"/>
@@ -24,5 +25,8 @@
         <TextBox x:Name="txtLastName" Grid.Column="1" HorizontalAlignment="Center" Height="22" Margin="34,14,36,14" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" MaxLength="10" MaxLines="1" PreviewKeyDown="txtLetterInput_PreviewKeyDown"/>
         <Button x:Name="cmdCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Right" Margin="0,10,50,0" Grid.Row="3" VerticalAlignment="Top" Width="75" IsCancel="True"/>
         <Button x:Name="cmdSave" Content="Save" HorizontalAlignment="Left" Margin="50,10,0,0" Grid.Row="3" VerticalAlignment="Top" Width="75" Grid.ColumnSpan="2" Click="cmdSave_Click"/>
+        <Label x:Name="lbError" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Margin="0,5,0,10" Visibility="Collapsed">
+            <TextBlock x:Name="tbError" Foreground="Red" TextWrapping="Wrap" Text="Error:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Label>
     </Grid>
 </Window>

@@ -387,9 +387,13 @@ namespace Assignment6AirlineReservation
                 wndAddPass.ShowDialog();
 
                 // Check the add passenger window to see if the user clicked sabve and if they did, then
-                // disable everything except the seats, so they are frced to click a seat
-
-                // Set the variable that tell that the user is in  Add passenger mode
+                if (wndAddPass.isSaveClicked)
+                {
+                    // disable everything except the seats, so they are frced to click a seat
+                    toggleInput(false);
+                    // Set the variable that tell that the user is in  Add passenger mode
+                    currentSeatSelectionMode = SeatSelectionMode.Add;
+                }
 
                 relocateWindow(this, wndAddPass);
                 this.Show();
@@ -485,6 +489,7 @@ namespace Assignment6AirlineReservation
                     // Add passenger Mode
                     // Insert a new passenger into the database, then insert a record into the link table (Done in another class)
                     case SeatSelectionMode.Add:
+                        seatClickModeAdd(seatClicked);
                         break;
                     // Change seat mode
                     case SeatSelectionMode.Change:
@@ -501,6 +506,25 @@ namespace Assignment6AirlineReservation
                 ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
+
+        /// <summary>
+        /// Add a new passenger to the data base with a seat number
+        /// </summary>
+        /// <param name="seatClicked"></param>
+        private void seatClickModeAdd(Label seatClicked)
+        {
+            try
+            {
+
+                toggleInput(true);
+                currentSeatSelectionMode = SeatSelectionMode.Regular;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
+
 
         /// <summary>
         /// If a seat is taken, then loop through that passenger in the combo box
