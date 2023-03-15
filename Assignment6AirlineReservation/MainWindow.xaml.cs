@@ -402,9 +402,38 @@ namespace Assignment6AirlineReservation
                 // and keep looping until the seat that was clicked, its number matcher a passengers seat number
                 // then select that combo box index or selected item and put the passengers seat in the label (lblPassengersSeatNumber)
                 default:
-                    foreach(Label seat in getCurrentFlightSeatsCanvas().Children)
-                    {
+                    // Get the clicked seat
+                    Label seatClicked = (Label)sender;
 
+                    // Make sure seatManager is initilized
+                    if(seatManager == null)
+                    {
+                        return;
+                    }
+
+                    // Find the corresponding seat number
+                    FlightPassengerLink fpl = seatManager.Information.Find(x => x.SeatNumber == seatClicked.Content.ToString());
+                    
+                    // If not found exit
+                    if(fpl == null)
+                    {
+                        return;
+                    }
+
+                    // Loop though the combobox to see it it matches
+                    foreach(Passenger passenger in cbChoosePassenger.Items)
+                    {
+                        // Make sure passenger is not null
+                        if(passenger == null)
+                        {
+                            continue;
+                        }
+                        // If match is found select it from the combo box and exit
+                        if(passenger.PassengerId == fpl.Passenger_Id)
+                        {
+                            cbChoosePassenger.SelectedItem = passenger;
+                            return;
+                        }
                     }
                     break;
 
