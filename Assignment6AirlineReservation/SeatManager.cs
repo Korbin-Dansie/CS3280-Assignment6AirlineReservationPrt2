@@ -82,5 +82,56 @@ namespace Assignment6AirlineReservation
             }
         }
 
+        /// <summary>
+        /// Move a passenger to another seat
+        /// Does not update it's list automaticly with the new information
+        /// </summary>
+        /// <param name="NewSeatNumber"></param>
+        /// <param name="FlightID"></param>
+        /// <param name="PassengerID"></param>
+        public void updateSeat(string NewSeatNumber, int FlightID, int PassengerID)
+        {
+            try
+            {
+                // Dataset
+                DataSet ds = new DataSet();
+
+                string sql = clsSQL.UpdatePassengerSeat(NewSeatNumber, FlightID.ToString(), PassengerID.ToString());
+
+                // Execute sql
+                int rows = 0;
+                db.ExecuteNonQuery(sql);
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
+
+        /// <summary>
+        /// Delete a passengers seat on all flight
+        /// As far as I can tell this is how its supposed to be programed
+        /// </summary>
+        /// <param name="PassengerID"></param>
+        public void deleteSeat(int PassengerID)
+        {
+            try
+            {
+                // Dataset
+                DataSet ds = new DataSet();
+
+                string sql = clsSQL.DeletePassengerSeat(PassengerID.ToString());
+
+                // Execute sql
+                int rows = 0;
+                db.ExecuteNonQuery(sql);
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
+
+
     }
 }

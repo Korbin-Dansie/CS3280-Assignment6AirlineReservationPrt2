@@ -71,5 +71,73 @@ namespace Assignment6AirlineReservation
                 return null;
             }
         }
+
+        /// <summary>
+        /// SQL statment to update a passengers seat
+        /// </summary>
+        /// <param name="sNewSeatNumber"></param>
+        /// <param name="sFlightID"></param>
+        /// <param name="sPassengerID"></param>
+        /// <returns></returns>
+        public static string UpdatePassengerSeat(string sNewSeatNumber, string sFlightID, string sPassengerID)
+        {
+            try
+            {
+                string sSQL = "UPDATE Flight_Passenger_Link " +
+                              "SET Seat_Number = " + sNewSeatNumber +
+                              " WHERE Passenger_ID = " + sPassengerID +
+                              " AND Flight_ID = " + sFlightID;
+                return sSQL;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Delete a passenger
+        /// </summary>
+        /// <param name="sFlightID"></param>
+        /// <param name="sPassengerID"></param>
+        /// <returns></returns>
+        public static string DeletePassenger(string sPassengerID)
+        {
+            try
+            {
+                string sSQL = "DELETE Passenger " +
+                              " WHERE Passenger_ID = " + sPassengerID;
+                return sSQL;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Delete all passenger seats on all flight
+        /// As far as I can tell this is how it is supposed to be coded for this assignment
+        /// </summary>
+        /// <param name="sFlightID"></param>
+        /// <param name="sPassengerID"></param>
+        /// <returns></returns>
+        public static string DeletePassengerSeat(string sPassengerID)
+        {
+            try
+            {
+                string sSQL = "DELETE Flight_Passenger_Link " +
+                              " WHERE Passenger_ID = " + sPassengerID;
+                return sSQL;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
+            }
+        }
+
     }
 }

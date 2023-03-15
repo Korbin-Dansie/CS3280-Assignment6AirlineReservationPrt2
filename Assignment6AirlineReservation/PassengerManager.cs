@@ -74,5 +74,29 @@ namespace Assignment6AirlineReservation
                 return null;
             }
         }
+
+        /// <summary>
+        /// Delete a passenger record
+        /// Does not automaticly update the list of passengers
+        /// </summary>
+        /// <param name="PassengerID"></param>
+        public void DeletePassenger(int PassengerID)
+        {
+            try
+            {
+                // Dataset
+                DataSet ds = new DataSet();
+
+                string sql = clsSQL.DeletePassenger(PassengerID.ToString());
+
+                // Execute sql
+                int rows = 0;
+                db.ExecuteNonQuery(sql);
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
     }
 }

@@ -39,6 +39,11 @@ namespace Assignment6AirlineReservation
         private FlightManager flightManager;
 
         /// <summary>
+        /// A list of passengers on a flight
+        /// </summary>
+        private PassengerManager passengers;
+
+        /// <summary>
         /// A list of flightId, passengerId, and seatNumbers
         /// </summary>
         private SeatManager seatManager;
@@ -132,52 +137,60 @@ namespace Assignment6AirlineReservation
         /// <param name="e"></param>
         private void cbChoosePassenger_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Recolor the passengers - To remove any green
-            recolorPassenger();
-
-           // Get the selected passenger
-            Passenger passenger = (Passenger)cbChoosePassenger.SelectedItem;
-
-            // If passenger is not found set label to empty and stop
-            if (passenger == null)
+            try
             {
-                lblPassengersSeatNumber.Content = String.Empty;
-                return;
-            }
+                // Recolor the passengers - To remove any green
+                recolorPassenger();
 
-            // Find the corresponding seat number
-            string seatNumber = getPassengerSeatNumber(passenger);
-            
-            // If we found a seat set the label to it
-            if(!String.IsNullOrEmpty(seatNumber))
-            {
-                lblPassengersSeatNumber.Content = seatNumber;
-            }
-            else
-            {
-                lblPassengersSeatNumber.Content = String.Empty;
-            }
+                // Get the selected passenger
+                Passenger passenger = (Passenger)cbChoosePassenger.SelectedItem;
 
-            // Look for the passenger seat number in the seat manager
-            FlightPassengerLink fpl = seatManager.Information.Find(x => x.Passenger_Id == passenger.PassengerId);
-           
-            // If no passenger found exit
-            if (fpl == null)
-            {
-                return;
-            }
-
-            // Loop through the canvas and color the selected seat green
-            Canvas currentCanvas = getCurrentFlightSeatsCanvas();
-            foreach (Label seat in currentCanvas.Children)
-            {
-                // If passenger seat number is equal to the seat color it green 
-                // Then exit because we are done
-                if(fpl.SeatNumber == seat.Content.ToString())
+                // If passenger is not found set label to empty and stop
+                if (passenger == null)
                 {
-                    SolidColorBrush solidColorBrush = new SolidColorBrush(Colors.Green);
-                    seat.Background = solidColorBrush;
+                    lblPassengersSeatNumber.Content = String.Empty;
+                    return;
                 }
+
+                // Find the corresponding seat number
+                string seatNumber = getPassengerSeatNumber(passenger);
+
+                // If we found a seat set the label to it
+                if (!String.IsNullOrEmpty(seatNumber))
+                {
+                    lblPassengersSeatNumber.Content = seatNumber;
+                }
+                else
+                {
+                    lblPassengersSeatNumber.Content = String.Empty;
+                }
+
+                // Look for the passenger seat number in the seat manager
+                FlightPassengerLink fpl = seatManager.Information.Find(x => x.Passenger_Id == passenger.PassengerId);
+
+                // If no passenger found exit
+                if (fpl == null)
+                {
+                    return;
+                }
+
+                // Loop through the canvas and color the selected seat green
+                Canvas currentCanvas = getCurrentFlightSeatsCanvas();
+                foreach (Label seat in currentCanvas.Children)
+                {
+                    // If passenger seat number is equal to the seat color it green 
+                    // Then exit because we are done
+                    if (fpl.SeatNumber == seat.Content.ToString())
+                    {
+                        SolidColorBrush solidColorBrush = new SolidColorBrush(Colors.Green);
+                        seat.Background = solidColorBrush;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
 
@@ -188,15 +201,23 @@ namespace Assignment6AirlineReservation
         /// <returns>The seat number, or null if not found</returns>
         private string getPassengerSeatNumber(Passenger passenger)
         {
-            FlightPassengerLink fpl = seatManager.Information.Find(x => x.Passenger_Id == passenger.PassengerId);
-            
-            // If we could not find the seat return negitive one
-            if(fpl == null)
+            try
             {
+                FlightPassengerLink fpl = seatManager.Information.Find(x => x.Passenger_Id == passenger.PassengerId);
+
+                // If we could not find the seat return negitive one
+                if (fpl == null)
+                {
+                    return null;
+                }
+
+                return fpl.SeatNumber;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
                 return null;
             }
-
-            return fpl.SeatNumber;
         }
 
         /// <summary>
@@ -205,18 +226,25 @@ namespace Assignment6AirlineReservation
         /// </summary>
         private void reloadPassengers()
         {
-            PassengerManager passengers = new PassengerManager(clsData);
-            passengers.GetPassengers(currentSelectedFlight.FlightId);
+            try
+            {
+                passengers = new PassengerManager(clsData);
+                passengers.GetPassengers(currentSelectedFlight.FlightId);
 
-            // Fill in the seat manager
-            seatManager = new SeatManager(clsData);
-            seatManager.GetFlightPassengerLink(currentSelectedFlight.FlightId);
+                // Fill in the seat manager
+                seatManager = new SeatManager(clsData);
+                seatManager.GetFlightPassengerLink(currentSelectedFlight.FlightId);
 
-            // Add the passangers to the combo box
-            cbChoosePassenger.ItemsSource = passengers.Passengers;
+                // Add the passangers to the combo box
+                cbChoosePassenger.ItemsSource = passengers.Passengers;
 
-            // Loop throught the seats and collor the taken one red
-            recolorPassenger();
+                // Loop throught the seats and collor the taken one red
+                recolorPassenger();
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
 
         /// <summary>
@@ -226,29 +254,35 @@ namespace Assignment6AirlineReservation
         /// </summary>
         private void recolorPassenger()
         {
-            Canvas c = getCurrentFlightSeatsCanvas();
-            // Color all passengers blue
-            // Color taken seats red
-            foreach (Label seat in c.Children)
+            try
             {
-                string seatNumber = seat.Content.ToString();
-
-                // see if we can find the seats context (number) in the seat manager
-                FlightPassengerLink flp = seatManager.Information.Find(x => x.SeatNumber == seatNumber);
-
-                // If we could not find a corresponding seat color it blue
-                if (flp == null)
+                Canvas c = getCurrentFlightSeatsCanvas();
+                // Color all passengers blue
+                // Color taken seats red
+                foreach (Label seat in c.Children)
                 {
-                    SolidColorBrush solidColorBrush = new SolidColorBrush(Colors.Blue);
-                    seat.Background = solidColorBrush;
-                    continue;
-                }
+                    string seatNumber = seat.Content.ToString();
 
-                if (flp.SeatNumber == seatNumber)
-                {
-                    SolidColorBrush solidColorBrush = new SolidColorBrush(Colors.Red);
-                    seat.Background = solidColorBrush;
+                    // see if we can find the seats context (number) in the seat manager
+                    FlightPassengerLink flp = seatManager.Information.Find(x => x.SeatNumber == seatNumber);
+
+                    // If we could not find a corresponding seat color it blue
+                    if (flp == null)
+                    {
+                        SolidColorBrush solidColorBrush = new SolidColorBrush(Colors.Blue);
+                        seat.Background = solidColorBrush;
+                    }
+                    // Else if seat number matches color it red
+                    else if (flp.SeatNumber == seatNumber)
+                    {
+                        SolidColorBrush solidColorBrush = new SolidColorBrush(Colors.Red);
+                        seat.Background = solidColorBrush;
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
 
@@ -283,13 +317,21 @@ namespace Assignment6AirlineReservation
         /// <returns></returns>
         private Canvas getCurrentFlightSeatsCanvas()
         {
-            if(Canvas767.Visibility == Visibility.Visible)
+            try
             {
-                return c767_Seats;
+                if (Canvas767.Visibility == Visibility.Visible)
+                {
+                    return c767_Seats;
+                }
+                else
+                {
+                    return cA380_Seats;
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return cA380_Seats;
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
             }
         }
 
@@ -312,29 +354,23 @@ namespace Assignment6AirlineReservation
         }
 
         /// <summary>
-        /// Color all the empty seats blue
-        /// And all the taken seats red
-        /// </summary>
-        private void FillPassengerSeats()
-        {
-            // Reset all eats in the selecte flight to blue
-            // Loop through each passenger in the list
-            // Then loop through each seat in the selected flight "c767_Seats.Children"
-            // Then compare the passengers seat to the labels content and if they match, then change the background to red because the seat is taken
-
-        }
-
-        /// <summary>
         /// Enables / Disables all the UI components
         /// </summary>
         private void toggleInput(bool enable)
         {
-            cbChooseFlight.IsEnabled = enable;
-            cbChoosePassenger.IsEnabled = enable;
+            try
+            {
+                cbChooseFlight.IsEnabled = enable;
+                cbChoosePassenger.IsEnabled = enable;
 
-            cmdChangeSeat.IsEnabled = enable;
-            cmdDeletePassenger.IsEnabled = enable;
-            cmdAddPassenger.IsEnabled = enable;
+                cmdChangeSeat.IsEnabled = enable;
+                cmdDeletePassenger.IsEnabled = enable;
+                cmdAddPassenger.IsEnabled = enable;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
 
         /// <summary>
@@ -366,8 +402,24 @@ namespace Assignment6AirlineReservation
 
         private void cmdChangeSeat_Click(object sender, RoutedEventArgs e)
         {
-            // Passenger is selected 
-            // Lock down window and set to change seat mode, force user to select a seat
+            try
+            {
+                // Passenger is selected 
+                Passenger passenger = (Passenger)cbChoosePassenger.SelectedItem;
+
+                if (passenger == null)
+                {
+                    return;
+                }
+
+                // Lock down window and set to change seat mode, force user to select a seat
+                toggleInput(false);
+                currentSeatSelectionMode = SeatSelectionMode.Change;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
 
         private void cmdDeletePassenger_Click(object sender, RoutedEventArgs e)
@@ -385,59 +437,113 @@ namespace Assignment6AirlineReservation
         /// <param name="e"></param>
         private void Seat_Click(object sender, MouseButtonEventArgs e)
         {
-            // What mode is the progarm in? Add passenger, Change Seat, or regular
-            switch (currentSeatSelectionMode)
+            try
             {
-                // Add passenger Mode
-                // Insert a new passenger into the database, then insert a record into the link table (Done in another class)
-                case SeatSelectionMode.Add:
-                    break;
-                // Change seat mode
-                // Only change the seat if the seat is empty
-                // If it's empty then update the link table to update the users new seat (Done in another class)
-                case SeatSelectionMode.Change:
-                    break;
-                // Otherwise in regular seat selection mode
-                // If a seat is taken, then loop through that passenger in the combo box
-                // and keep looping until the seat that was clicked, its number matcher a passengers seat number
-                // then select that combo box index or selected item and put the passengers seat in the label (lblPassengersSeatNumber)
-                default:
-                    // Get the clicked seat
-                    Label seatClicked = (Label)sender;
+                // Get the clicked seat
+                Label seatClicked = (Label)sender;
 
-                    // Make sure seatManager is initilized
-                    if(seatManager == null)
-                    {
-                        return;
-                    }
+                // Make sure seatManager is initilized
+                if (seatManager == null)
+                {
+                    return;
+                }
 
-                    // Find the corresponding seat number
-                    FlightPassengerLink fpl = seatManager.Information.Find(x => x.SeatNumber == seatClicked.Content.ToString());
-                    
-                    // If not found exit
-                    if(fpl == null)
-                    {
-                        return;
-                    }
+                // Find the corresponding seat number
+                FlightPassengerLink fpl = seatManager.Information.Find(x => x.SeatNumber == seatClicked.Content.ToString());
 
-                    // Loop though the combobox to see it it matches
-                    foreach(Passenger passenger in cbChoosePassenger.Items)
-                    {
-                        // Make sure passenger is not null
-                        if(passenger == null)
-                        {
-                            continue;
-                        }
-                        // If match is found select it from the combo box and exit
-                        if(passenger.PassengerId == fpl.Passenger_Id)
-                        {
-                            cbChoosePassenger.SelectedItem = passenger;
-                            return;
-                        }
-                    }
-                    break;
-
+                // What mode is the progarm in? Add passenger, Change Seat, or regular
+                switch (currentSeatSelectionMode)
+                {
+                    // Add passenger Mode
+                    // Insert a new passenger into the database, then insert a record into the link table (Done in another class)
+                    case SeatSelectionMode.Add:
+                        break;
+                    // Change seat mode
+                    case SeatSelectionMode.Change:
+                        seatClickModeChange(fpl, seatClicked);
+                        break;
+                    // Otherwise in regular seat selection mode
+                    default:
+                        seatClickModeRegular(fpl);
+                        break;
+                }
             }
+            catch (Exception ex)
+            {
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
+
+        /// <summary>
+        /// If a seat is taken, then loop through that passenger in the combo box
+        /// and keep looping until the seat that was clicked, its number matcher a passengers seat number
+        /// then select that combo box index or selected item and put the passengers seat in the label (lblPassengersSeatNumber)
+        /// </summary>
+        /// <param name="fpl"></param>
+        private void seatClickModeRegular(FlightPassengerLink fpl)
+        {
+            try
+            {
+                // If not found exit
+                if (fpl == null)
+                {
+                    return;
+                }
+
+                // Loop though the combobox to see it it matches
+                foreach (Passenger passenger in cbChoosePassenger.Items)
+                {
+                    // Make sure passenger is not null
+                    if (passenger == null)
+                    {
+                        continue;
+                    }
+                    // If match is found select it from the combo box and exit
+                    if (passenger.PassengerId == fpl.Passenger_Id)
+                    {
+                        cbChoosePassenger.SelectedItem = passenger;
+                        return;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
+
+        /// <summary>
+        /// Only change the seat if the seat is empty
+        /// If it's empty then update the link table to update the users new seat (Done in another class)
+        /// </summary>
+        /// <param name="fpl"></param>
+        /// <param name="seatClicked"></param>
+        private void seatClickModeChange(FlightPassengerLink fpl, Label seatClicked)
+        {
+            // If seat is taken do nothing
+            if (fpl != null)
+            {
+                return;
+            }
+
+            Passenger currentSelectedPassenger = (Passenger)cbChoosePassenger.SelectedItem;
+            string seatNumber = seatClicked.Content.ToString();
+            int flightId = currentSelectedFlight.FlightId;
+            int passengerId = currentSelectedPassenger.PassengerId;
+
+            // Update the seat
+            seatManager.updateSeat(seatNumber, flightId, passengerId);
+
+            // Reload everything we need
+            reloadPassengers();
+
+            // Find and reselect the passenger based on the the passengers id
+            Passenger previouslySelectedPassenger = passengers.Passengers.Find(x => x.PassengerId == passengerId);
+            cbChoosePassenger.SelectedItem = previouslySelectedPassenger;
+
+            // Reset the selection mode and enable input
+            currentSeatSelectionMode = SeatSelectionMode.Regular;
+            toggleInput(true);
         }
 
         /// <summary>
