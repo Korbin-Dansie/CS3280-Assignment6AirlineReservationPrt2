@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -25,22 +26,32 @@ namespace Assignment6AirlineReservation
         /// <summary>
         /// Data Connection
         /// </summary>
-        clsDataAccess clsData;
+        private clsDataAccess clsData;
+
+        /// <summary>
+        /// The currently selected flight
+        /// </summary>
+        private Flight currentSelectedFlight;
 
         /// <summary>
         /// A list of flights
         /// </summary>
-        FlightManager flightManager;
+        private FlightManager flightManager;
 
         /// <summary>
         /// A list of flightId, passengerId, and seatNumbers
         /// </summary>
-        SeatManager seatManager;
+        private SeatManager seatManager;
 
         /// <summary>
         /// The add passenger window
         /// </summary>
-        wndAddPassenger wndAddPass;
+        private wndAddPassenger wndAddPass;
+
+        /// <summary>
+        /// Current seat selection mode
+        /// </summary>
+        private SeatSelectionMode currentSeatSelectionMode = SeatSelectionMode.Regular;
 
         /// <summary>
         /// constructor for the main window
@@ -88,6 +99,8 @@ namespace Assignment6AirlineReservation
                     return;
                 }
 
+                currentSelectedFlight = flight;
+
                 // Enable input
                 cbChoosePassenger.IsEnabled = true;
                 gPassengerCommands.IsEnabled = true;
@@ -103,21 +116,29 @@ namespace Assignment6AirlineReservation
                 }
 
                 // Fill in the passanger combo box
-                PassengerManager passengers = new PassengerManager(clsData);
-                passengers.GetPassengers(flight.FlightId);
-
-                // Fill in the seat manager
-                seatManager = new SeatManager(clsData);
-                seatManager.GetFlightPassengerLink(flight.FlightId);
-
-                // Add the passangers to the combo box
-                cbChoosePassenger.ItemsSource = passengers.Passengers;
-
+                reloadPassengers();
             }
             catch (Exception ex)
             {
                 ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
+        }
+
+        /// <summary>
+        /// Refill the passenger combo box
+        /// and update seat labels
+        /// </summary>
+        private void reloadPassengers()
+        {
+            PassengerManager passengers = new PassengerManager(clsData);
+            passengers.GetPassengers(currentSelectedFlight.FlightId);
+
+            // Fill in the seat manager
+            seatManager = new SeatManager(clsData);
+            seatManager.GetFlightPassengerLink(currentSelectedFlight.FlightId);
+
+            // Add the passangers to the combo box
+            cbChoosePassenger.ItemsSource = passengers.Passengers;
         }
 
         /// <summary>
@@ -238,19 +259,36 @@ namespace Assignment6AirlineReservation
         private void Seat_Click(object sender, MouseButtonEventArgs e)
         {
             // What mode is the progarm in? Add passenger, Change Seat, or regular
+            switch (currentSeatSelectionMode)
+            {
+                // Add passenger Mode
+                // Insert a new passenger into the database, then insert a record into the link table (Done in another class)
+                case SeatSelectionMode.Add:
+                    break;
+                // Change seat mode
+                // Only change the seat if the seat is empty
+                // If it's empty then update the link table to update the users new seat (Done in another class)
+                case SeatSelectionMode.Change:
+                    break;
+                // Otherwise in regular seat selection mode
+                // If a seat is taken, then loop through that passenger in the combo box
+                // and keep looping until the seat that was clicked, its number matcher a passengers seat number
+                // then select that combo box index or selected item and put the passengers seat in the label (lblPassengersSeatNumber)
+                default:
 
-            // Add passenger Mode
-            // Insert a new passenger into the database, then insert a record into the link table (Done in another class)
+                    break;
 
-            // Change seat mode
-            // Only change the seat if the seat is empty
-            // If it's empty then update the link table to update the users new seat (Done in another class)
+            }
+        }
 
-            // Otherwise in regular seat selection mode
-            // If a seat is taken, then loop through tht passenger in the combo box
-            // and keep looping until the seat that was clicked, its number matcher a passengers seat number
-            // then select that combo box index or selected item and put the passengers seat in the label (lblPassengersSeatNumber)
-
+        /// <summary>
+        /// Different states the seats could be in
+        /// </summary>
+        private enum SeatSelectionMode
+        {
+            Regular,
+            Add,
+            Change
         }
     }
 }
