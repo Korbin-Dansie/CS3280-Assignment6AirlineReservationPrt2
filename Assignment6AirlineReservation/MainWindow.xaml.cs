@@ -126,15 +126,19 @@ namespace Assignment6AirlineReservation
 
         /// <summary>
         /// On change update the label to the corresponding seat number
+        /// and color selected seat green
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void cbChoosePassenger_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Recolor the passengers - To remove any green
+            recolorPassenger();
+
            // Get the selected passenger
             Passenger passenger = (Passenger)cbChoosePassenger.SelectedItem;
 
-            // If passenger is not found set label to empty
+            // If passenger is not found set label to empty and stop
             if (passenger == null)
             {
                 lblPassengersSeatNumber.Content = String.Empty;
@@ -145,13 +149,35 @@ namespace Assignment6AirlineReservation
             string seatNumber = getPassengerSeatNumber(passenger);
             
             // If we found a seat set the label to it
-            if(String.IsNullOrEmpty(seatNumber))
+            if(!String.IsNullOrEmpty(seatNumber))
             {
                 lblPassengersSeatNumber.Content = seatNumber;
             }
             else
             {
                 lblPassengersSeatNumber.Content = String.Empty;
+            }
+
+            // Look for the passenger seat number in the seat manager
+            FlightPassengerLink fpl = seatManager.Information.Find(x => x.Passenger_Id == passenger.PassengerId);
+           
+            // If no passenger found exit
+            if (fpl == null)
+            {
+                return;
+            }
+
+            // Loop through the canvas and color the selected seat green
+            Canvas currentCanvas = getCurrentFlightSeatsCanvas();
+            foreach (Label seat in currentCanvas.Children)
+            {
+                // If passenger seat number is equal to the seat color it green 
+                // Then exit because we are done
+                if(fpl.SeatNumber == seat.Content.ToString())
+                {
+                    SolidColorBrush solidColorBrush = new SolidColorBrush(Colors.Green);
+                    seat.Background = solidColorBrush;
+                }
             }
         }
 
@@ -190,16 +216,31 @@ namespace Assignment6AirlineReservation
             cbChoosePassenger.ItemsSource = passengers.Passengers;
 
             // Loop throught the seats and collor the taken one red
-            foreach(Label seat in getCurrentFlightSeatsCanvas().Children)
+            recolorPassenger();
+        }
+
+        /// <summary>
+        /// Recolor the current canvas seats
+        /// Blue for Empty
+        /// Red  for Taken
+        /// </summary>
+        private void recolorPassenger()
+        {
+            Canvas c = getCurrentFlightSeatsCanvas();
+            // Color all passengers blue
+            // Color taken seats red
+            foreach (Label seat in c.Children)
             {
                 string seatNumber = seat.Content.ToString();
 
                 // see if we can find the seats context (number) in the seat manager
                 FlightPassengerLink flp = seatManager.Information.Find(x => x.SeatNumber == seatNumber);
 
-                // If we could not find a corresponding seat contine
-                if(flp == null)
+                // If we could not find a corresponding seat color it blue
+                if (flp == null)
                 {
+                    SolidColorBrush solidColorBrush = new SolidColorBrush(Colors.Blue);
+                    seat.Background = solidColorBrush;
                     continue;
                 }
 
