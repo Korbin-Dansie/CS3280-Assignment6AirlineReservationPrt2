@@ -33,6 +33,11 @@ namespace Assignment6AirlineReservation
         FlightManager flightManager;
 
         /// <summary>
+        /// A list of flightId, passengerId, and seatNumbers
+        /// </summary>
+        SeatManager seatManager;
+
+        /// <summary>
         /// The add passenger window
         /// </summary>
         wndAddPassenger wndAddPass;
@@ -101,6 +106,10 @@ namespace Assignment6AirlineReservation
                 PassengerManager passengers = new PassengerManager(clsData);
                 passengers.GetPassengers(flight.FlightId);
 
+                // Fill in the seat manager
+                seatManager = new SeatManager(clsData);
+                seatManager.GetFlightPassengerLink(flight.FlightId);
+
                 // Add the passangers to the combo box
                 cbChoosePassenger.ItemsSource = passengers.Passengers;
 
@@ -110,32 +119,6 @@ namespace Assignment6AirlineReservation
                 ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
             }
         }
-
-        /// <summary>
-        /// Handels when the user clicks on the add passenger button
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void cmdAddPassenger_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                this.Hide();
-
-                //wndAddPass.Show();
-                //wndAddPass.Hide();
-
-                relocateWindow(wndAddPass, this);
-                wndAddPass.ShowDialog();
-                relocateWindow(this, wndAddPass);
-                this.Show();
-            }
-            catch (Exception ex)
-            {
-                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
-            }
-        }
-
 
         /// <summary>
         /// Toggle the visibility of the two canvases
@@ -178,6 +161,96 @@ namespace Assignment6AirlineReservation
             {
                 ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
             }
+        }
+
+        /// <summary>
+        /// Color all the empty seats blue
+        /// And all the taken seats red
+        /// </summary>
+        private void FillPassengerSeats()
+        {
+            // Reset all eats in the selecte flight to blue
+            // Loop through each passenger in the list
+            // Then loop through each seat in the selected flight "c767_Seats.Children"
+            // Then compare the passengers seat to the labels content and if they match, then change the background to red because the seat is taken
+
+        }
+
+        /// <summary>
+        /// Enables / Disables all the UI components
+        /// </summary>
+        private void toggleInput(bool enable)
+        {
+            cbChooseFlight.IsEnabled = enable;
+            cbChoosePassenger.IsEnabled = enable;
+
+            cmdChangeSeat.IsEnabled = enable;
+            cmdDeletePassenger.IsEnabled = enable;
+            cmdAddPassenger.IsEnabled = enable;
+        }
+
+        /// <summary>
+        /// Handels when the user clicks on the add passenger button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cmdAddPassenger_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                this.Hide();
+                relocateWindow(wndAddPass, this);
+                wndAddPass.ShowDialog();
+
+                // Check the add passenger window to see if the user clicked sabve and if they did, then
+                // disable everything except the seats, so they are frced to click a seat
+
+                // Set the variable that tell that the user is in  Add passenger mode
+
+                relocateWindow(this, wndAddPass);
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.handleError(MethodInfo.GetCurrentMethod(), ex);
+            }
+        }
+
+        private void cmdChangeSeat_Click(object sender, RoutedEventArgs e)
+        {
+            // Passenger is selected 
+            // Lock down window and set to change seat mode, force user to select a seat
+        }
+
+        private void cmdDeletePassenger_Click(object sender, RoutedEventArgs e)
+        {
+            // Passenger is selected
+            // Delete the currently selected passenger (Done in another class)
+            // Relaod the passenger into the combo box
+            // Reload the taken seats
+        }
+
+        /// <summary>
+        /// This method will get called when the user click on any seat
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Seat_Click(object sender, MouseButtonEventArgs e)
+        {
+            // What mode is the progarm in? Add passenger, Change Seat, or regular
+
+            // Add passenger Mode
+            // Insert a new passenger into the database, then insert a record into the link table (Done in another class)
+
+            // Change seat mode
+            // Only change the seat if the seat is empty
+            // If it's empty then update the link table to update the users new seat (Done in another class)
+
+            // Otherwise in regular seat selection mode
+            // If a seat is taken, then loop through tht passenger in the combo box
+            // and keep looping until the seat that was clicked, its number matcher a passengers seat number
+            // then select that combo box index or selected item and put the passengers seat in the label (lblPassengersSeatNumber)
+
         }
     }
 }

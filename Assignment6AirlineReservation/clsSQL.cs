@@ -50,5 +50,26 @@ namespace Assignment6AirlineReservation
                 return null;
             }
         }
+
+        /// <summary>
+        /// SQL statment to get passenger seats
+        /// </summary>
+        /// <param name="sFlightID"></param>
+        /// <returns></returns>
+        public static string GetFlightPassengerLink(string sFlightID)
+        {
+            try
+            {
+                string sSQL =   "SELECT Flight_ID, Passenger_ID, Seat_Number " +
+                                "FROM Flight_Passenger_Link " +
+                                "WHERE Flight_ID = " + sFlightID;
+                return sSQL;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
+            }
+        }
     }
 }

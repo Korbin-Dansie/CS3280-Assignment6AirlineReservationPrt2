@@ -60,8 +60,10 @@
     <Compile Include="ErrorHandling.cs" />
     <Compile Include="Flight.cs" />
     <Compile Include="FlightManager.cs" />
+    <Compile Include="FlightPassengerLink.cs" />
     <Compile Include="Passenger.cs" />
     <Compile Include="PassengerManager.cs" />
+    <Compile Include="SeatManager.cs" />
     <Compile Include="wndAddPassenger.xaml.cs">
       <DependentUpon>wndAddPassenger.xaml</DependentUpon>
     </Compile>
