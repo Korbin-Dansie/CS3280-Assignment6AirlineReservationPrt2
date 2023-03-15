@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,9 +57,16 @@ namespace Assignment6AirlineReservation
         /// <param name="seatNumber"></param>
         public FlightPassengerLink(int flight_Id, int passenger_id, string seatNumber)
         {
-            Flight_Id = flight_Id;
-            Passenger_Id = passenger_id;
-            SeatNumber = seatNumber;
+            try
+            {
+                Flight_Id = flight_Id;
+                Passenger_Id = passenger_id;
+                SeatNumber = seatNumber;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
     }
 }

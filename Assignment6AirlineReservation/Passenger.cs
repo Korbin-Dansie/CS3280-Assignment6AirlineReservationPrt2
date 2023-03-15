@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,9 +44,16 @@ namespace Assignment6AirlineReservation
         /// </summary>
         public Passenger()
         {
-            PassengerId = 0;
-            PassengerFirstName = string.Empty;
-            PassengerLastName = string.Empty;
+            try
+            {
+                PassengerId = 0;
+                PassengerFirstName = string.Empty;
+                PassengerLastName = string.Empty;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
 
         /// <summary>
@@ -56,9 +64,16 @@ namespace Assignment6AirlineReservation
         /// <param name="passengerLastName"></param>
         public Passenger(int passengerId, string passengerFirstName, string passengerLastName)
         {
-            PassengerId = passengerId;
-            PassengerFirstName = passengerFirstName;
-            PassengerLastName = passengerLastName;
+            try
+            {
+                PassengerId = passengerId;
+                PassengerFirstName = passengerFirstName;
+                PassengerLastName = passengerLastName;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
 
         /// <summary>
@@ -67,7 +82,15 @@ namespace Assignment6AirlineReservation
         /// <returns></returns>
         public override string ToString()
         {
-            return PassengerFirstName + " " + PassengerLastName;
+            try
+            {
+                return PassengerFirstName + " " + PassengerLastName;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+                return null;
+            }
         }
     }
 

@@ -36,7 +36,14 @@ namespace Assignment6AirlineReservation
         /// <param name="db"></param>
         public SeatManager(clsDataAccess db)
         {
-            this.db = db;
+            try
+            {
+                this.db = db;
+            }
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
 
         /// <summary>

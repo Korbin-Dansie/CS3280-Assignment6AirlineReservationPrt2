@@ -548,30 +548,37 @@ namespace Assignment6AirlineReservation
         /// <param name="seatClicked"></param>
         private void seatClickModeChange(FlightPassengerLink fpl, Label seatClicked)
         {
-            // If seat is taken do nothing
-            if (fpl != null)
+            try
             {
-                return;
+                // If seat is taken do nothing
+                if (fpl != null)
+                {
+                    return;
+                }
+
+                Passenger currentSelectedPassenger = (Passenger)cbChoosePassenger.SelectedItem;
+                string seatNumber = seatClicked.Content.ToString();
+                int flightId = currentSelectedFlight.FlightId;
+                int passengerId = currentSelectedPassenger.PassengerId;
+
+                // Update the seat
+                seatManager.updateSeat(seatNumber, flightId, passengerId);
+
+                // Reload everything we need
+                reloadPassengers();
+
+                // Find and reselect the passenger based on the the passengers id
+                Passenger previouslySelectedPassenger = passengers.Passengers.Find(x => x.PassengerId == passengerId);
+                cbChoosePassenger.SelectedItem = previouslySelectedPassenger;
+
+                // Reset the selection mode and enable input
+                currentSeatSelectionMode = SeatSelectionMode.Regular;
+                toggleInput(true);
             }
-
-            Passenger currentSelectedPassenger = (Passenger)cbChoosePassenger.SelectedItem;
-            string seatNumber = seatClicked.Content.ToString();
-            int flightId = currentSelectedFlight.FlightId;
-            int passengerId = currentSelectedPassenger.PassengerId;
-
-            // Update the seat
-            seatManager.updateSeat(seatNumber, flightId, passengerId);
-
-            // Reload everything we need
-            reloadPassengers();
-
-            // Find and reselect the passenger based on the the passengers id
-            Passenger previouslySelectedPassenger = passengers.Passengers.Find(x => x.PassengerId == passengerId);
-            cbChoosePassenger.SelectedItem = previouslySelectedPassenger;
-
-            // Reset the selection mode and enable input
-            currentSeatSelectionMode = SeatSelectionMode.Regular;
-            toggleInput(true);
+            catch(Exception ex)
+            {
+                ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
+            }
         }
 
         /// <summary>
