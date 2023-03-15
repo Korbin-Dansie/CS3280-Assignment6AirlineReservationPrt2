@@ -21,7 +21,7 @@ namespace Assignment6AirlineReservation
         /// <summary>
         /// The seat number
         /// </summary>
-        int _seatNumber;
+        string _seatNumber;
 
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Assignment6AirlineReservation
         /// <summary>
         /// The seat number
         /// </summary>
-        public int SeatNumber { 
+        public string SeatNumber { 
             get { return _seatNumber; }
             set { _seatNumber = value; }
         }
@@ -54,7 +54,7 @@ namespace Assignment6AirlineReservation
         /// <param name="flight_Id"></param>
         /// <param name="passenger_id"></param>
         /// <param name="seatNumber"></param>
-        public FlightPassengerLink(int flight_Id, int passenger_id, int seatNumber)
+        public FlightPassengerLink(int flight_Id, int passenger_id, string seatNumber)
         {
             Flight_Id = flight_Id;
             Passenger_Id = passenger_id;

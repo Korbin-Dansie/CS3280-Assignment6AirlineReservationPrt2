@@ -62,16 +62,12 @@ namespace Assignment6AirlineReservation
                 {
                     int flightNumberId = 0;
                     int passengerNumberId = 0;
-                    int seatNumber = 0;
+                    string seatNumber = String.Empty;
 
                     flightNumberId = (int)row.ItemArray[0];
                     passengerNumberId = (int)row.ItemArray[1];
 
-                    bool success = Int32.TryParse(row.ItemArray[2].ToString(), out seatNumber);
-                    if (!success)
-                    {
-                        ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), new Exception("Could not convert Seat_Number to an int"));
-                    }
+                    seatNumber = row.ItemArray[2].ToString();
 
                     FlightPassengerLink fpl = new FlightPassengerLink(flightNumberId, passengerNumberId, seatNumber);
                     Information.Add(fpl);

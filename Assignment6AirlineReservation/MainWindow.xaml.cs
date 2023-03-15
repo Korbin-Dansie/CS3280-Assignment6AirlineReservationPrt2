@@ -142,11 +142,10 @@ namespace Assignment6AirlineReservation
             }
 
             // Find the corresponding seat number
-            int seatNumber;
-            seatNumber = getPassengerSeatNumber(passenger);
+            string seatNumber = getPassengerSeatNumber(passenger);
             
             // If we found a seat set the label to it
-            if(seatNumber > 0)
+            if(String.IsNullOrEmpty(seatNumber))
             {
                 lblPassengersSeatNumber.Content = seatNumber;
             }
@@ -160,15 +159,15 @@ namespace Assignment6AirlineReservation
         /// Returns a passengers seat number
         /// </summary>
         /// <param name="passenger"></param>
-        /// <returns>The seat number, or -1 if not found</returns>
-        private int getPassengerSeatNumber(Passenger passenger)
+        /// <returns>The seat number, or null if not found</returns>
+        private string getPassengerSeatNumber(Passenger passenger)
         {
             FlightPassengerLink fpl = seatManager.Information.Find(x => x.Passenger_Id == passenger.PassengerId);
             
             // If we could not find the seat return negitive one
             if(fpl == null)
             {
-                return -1;
+                return null;
             }
 
             return fpl.SeatNumber;
@@ -193,14 +192,7 @@ namespace Assignment6AirlineReservation
             // Loop throught the seats and collor the taken one red
             foreach(Label seat in getCurrentFlightSeatsCanvas().Children)
             {
-                int seatNumber;
-                bool res = Int32.TryParse(seat.Content.ToString(), out seatNumber);
-
-                // If we could not parse it contine
-                if (!res)
-                {
-                    continue;
-                }
+                string seatNumber = seat.Content.ToString();
 
                 // see if we can find the seats context (number) in the seat manager
                 FlightPassengerLink flp = seatManager.Information.Find(x => x.SeatNumber == seatNumber);
