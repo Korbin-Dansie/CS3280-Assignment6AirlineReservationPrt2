@@ -489,7 +489,7 @@ namespace Assignment6AirlineReservation
                     // Add passenger Mode
                     // Insert a new passenger into the database, then insert a record into the link table (Done in another class)
                     case SeatSelectionMode.Add:
-                        seatClickModeAdd(seatClicked);
+                        seatClickModeAdd(seatClicked, fpl);
                         break;
                     // Change seat mode
                     case SeatSelectionMode.Change:
@@ -511,13 +511,35 @@ namespace Assignment6AirlineReservation
         /// Add a new passenger to the data base with a seat number
         /// </summary>
         /// <param name="seatClicked"></param>
-        private void seatClickModeAdd(Label seatClicked)
+        private void seatClickModeAdd(Label seatClicked, FlightPassengerLink fpl)
         {
             try
             {
+                // Make sure seat is empty
+                if(fpl != null)
+                {
+                    return;
+                }
+
+                string firstName = wndAddPass.txtFirstName.Text;
+                string lastName = wndAddPass.txtLastName.Text;
+
+                int newPassengerID = passengers.AddPassenger(firstName, lastName);
+                seatManager.insertSeat(currentSelectedFlight.FlightId, newPassengerID, seatClicked.Content.ToString());
+
+                // Reload the passengers and select the new passenger
+                reloadPassengers();
+                selectPassengerByID(newPassengerID);
+
+                //Reset
+                wndAddPass.isSaveClicked = false;
+                wndAddPass.txtFirstName.Text = String.Empty;
+                wndAddPass.txtLastName.Text = String.Empty;
 
                 toggleInput(true);
                 currentSeatSelectionMode = SeatSelectionMode.Regular;
+
+
             }
             catch(Exception ex)
             {
@@ -592,8 +614,7 @@ namespace Assignment6AirlineReservation
                 reloadPassengers();
 
                 // Find and reselect the passenger based on the the passengers id
-                Passenger previouslySelectedPassenger = passengers.Passengers.Find(x => x.PassengerId == passengerId);
-                cbChoosePassenger.SelectedItem = previouslySelectedPassenger;
+                selectPassengerByID(passengerId);
 
                 // Reset the selection mode and enable input
                 currentSeatSelectionMode = SeatSelectionMode.Regular;
@@ -603,6 +624,16 @@ namespace Assignment6AirlineReservation
             {
                 ErrorHandling.throwError(MethodInfo.GetCurrentMethod(), ex);
             }
+        }
+
+        /// <summary>
+        /// Sets the combo box to select the passenger with the current id
+        /// </summary>
+        /// <param name="passengerId"></param>
+        private void selectPassengerByID(int passengerId)
+        {
+            Passenger previouslySelectedPassenger = passengers.Passengers.Find(x => x.PassengerId == passengerId);
+            cbChoosePassenger.SelectedItem = previouslySelectedPassenger;
         }
 
         /// <summary>
