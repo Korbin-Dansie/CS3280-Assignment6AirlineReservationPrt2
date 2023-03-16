@@ -393,6 +393,10 @@ namespace Assignment6AirlineReservation
                     toggleInput(false);
                     // Set the variable that tell that the user is in  Add passenger mode
                     currentSeatSelectionMode = SeatSelectionMode.Add;
+
+                    // If there is a currently selected passenger deselect it
+                    cbChoosePassenger.SelectedItem = null;
+                    recolorPassenger();
                 }
 
                 relocateWindow(this, wndAddPass);
